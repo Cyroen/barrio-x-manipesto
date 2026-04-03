@@ -139,7 +139,7 @@ export default function UploadPage() {
                             <Box sx={{
                                 position: 'relative',
                                 width: '200px',
-                                height: '200px'
+                                height: '200px',
                             }}>
                                 <Image loading="eager" src="/images/upload.webp" fill alt="Upload" style={{objectFit: 'contain'}}></Image>
                             </Box>
