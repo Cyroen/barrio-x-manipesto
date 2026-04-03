@@ -1,0 +1,85 @@
+body {
+  margin: 0;
+  background: #f2f2f2;
+}
+
+.main_ {
+  display: flex;
+  flex-direction: row;
+}
+
+.dashboard_container {
+  transition: 0.3s all ease;
+}
+
+body:has(.sidebar.expand) .dashboard_container {
+  margin-left: 300px;
+}
+
+body:has(.sidebar.collapsed) .dashboard_container {
+  margin-left: 84px;
+}
+
+.sidebar .MuiPaper-root {
+  transition: 0.3s all ease-in-out !important;
+}
+.sidebar .avatar {
+  cursor: pointer;
+}
+.sidebar .name, .sidebar .designation, .sidebar .avatar_container, .sidebar .avatar, .sidebar .clock_outer_container, .sidebar .clock_container, .sidebar .logout_text, .sidebar .logout_icon, .sidebar .logout_button, .sidebar .located_on, .sidebar .located_on .MuiTypography-root, .sidebar .located_on svg {
+  transition: 0.3s all ease;
+  overflow: hidden;
+}
+.sidebar .clock_outer_container, .sidebar .clock_container, .sidebar .clock_image {
+  transition: 0.3s all ease;
+}
+.sidebar.expand .MuiPaper-root {
+  width: 300px !important;
+}
+.sidebar.expand .avatar_container {
+  max-height: 200px;
+}
+.sidebar.expand .clock_image {
+  opacity: 1;
+}
+.sidebar.expand .logout_text {
+  max-width: 100px;
+}
+.sidebar.expand .located_on svg {
+  margin-right: 8px;
+  margin-left: -4px;
+}
+.sidebar.expand .located_on {
+  max-width: 300px;
+}
+.sidebar.expand .located_on .MuiTypography-root {
+  max-width: 200px;
+  max-height: 100px;
+}
+.sidebar.collapsed .MuiPaper-root {
+  width: 84px !important;
+}
+.sidebar.collapsed .avatar_container {
+  padding-top: 32px;
+  max-height: 50px;
+}
+.sidebar.collapsed .clock_image {
+  opacity: 0;
+}
+.sidebar.collapsed .logout_text {
+  max-width: 0px;
+}
+.sidebar.collapsed .located_on svg {
+  margin-right: 0px;
+  margin-left: 0px;
+}
+.sidebar.collapsed .logout_button {
+  border-color: transparent;
+}
+.sidebar.collapsed .located_on {
+  max-width: 84px;
+}
+.sidebar.collapsed .located_on .MuiTypography-root {
+  max-width: 0px;
+  max-height: 0px;
+}
