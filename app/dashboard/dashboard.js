@@ -194,8 +194,8 @@ function QrPrintTemp(props){
                             <Image src="/images/testqr.jpg" fill alt="QR"></Image>
                         </Box>
                         <Stack p={1} direction={'column'} justifyContent={'center'}>
-                            <Typography variant="h6" fontSize={'1rem'} fontFamily={'sans-serif'} component={'div'} fontWeight={800} textAlign={'center'}>{name ? name : 'No name'}</Typography>
-                            <Typography variant="body2" fontSize={'.5rem'} component={'div'} textAlign={'center'}>Owner</Typography>
+                            <Typography whiteSpace={'wrap'} variant="h6" fontSize={'1rem'} fontFamily={'sans-serif'} component={'div'} fontWeight={800} textAlign={'center'}>{name ? name : 'No name'}</Typography>
+                            <Typography whiteSpace={'wrap'} variant="body2" fontSize={'.5rem'} component={'div'} textAlign={'center'}>Owner</Typography>
                             <Divider flexItem sx={{width: "80%", mx: 'auto', my: 0.5}}/>
                             <Typography whiteSpace={'wrap'} variant="body1" fontSize={'.5rem'} component={'div'} textAlign={'center'}>Barangay</Typography>
                             <Typography whiteSpace={'wrap'} variant="body1" fontSize={'.5rem'} component={'div'} textAlign={'center'} mb={2}>Printed at {date ? format(date, "MMM dd, yyyy") + ' at ' +  format(date, "hh:mm a") : 'Not found'}</Typography>
