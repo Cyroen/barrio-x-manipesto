@@ -3,8 +3,10 @@
 import { CalendarMonth, ChevronLeft, Info, KeyboardArrowDown, LocationOn, Person, QrCode, Refresh, Search, Sort } from "@mui/icons-material";
 import { Avatar, Box, Button, Chip, Collapse, Container, Divider, Drawer, IconButton, InputAdornment, Paper, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from "@mui/material";
 import { PieChart } from "@mui/x-charts";
-import { Fragment, useState } from "react"
+import { Fragment, useEffect, useRef, useState } from "react"
 import {differenceInYears, format} from "date-fns"
+import Image from "next/image";
+import { domToBlob } from "modern-screenshot";
 
 
 function CollapseButton(props){
@@ -35,10 +37,37 @@ function CollapseButton(props){
 
 function ListRow(props){
     const { name, gender, dob, address, uploaded_via, last_updated, status, stamps, qr, } = props?.data;
+    const [open, setOpen] = useState(false);
+    const [qrPrinting, setQrPrinting] = useState(false);
 
-    console.log(props)
+    
+    const ref = useRef(null);
 
-    const [open, setOpen] = useState(false)
+    function download(){
+        if(!ref.current) return;
+        domToBlob(ref.current, {quality: 1, scale: 1}).then(async (dataUrl_wbkt)=> {
+            console.log(dataUrl_wbkt)
+            var data = new Blob([dataUrl_wbkt], {type: 'image/png'});
+            var csvURL = window.URL.createObjectURL(data);
+            const tempLink = document.createElement('a');
+            tempLink.href = csvURL;
+            tempLink.setAttribute('download', `${name}.png`);
+            tempLink.click();
+            setQrPrinting(false)
+        })
+    }
+
+
+    function qrCreate(){
+        if(qrPrinting) return;
+        setQrPrinting(true);
+    }
+
+    useEffect(() => {
+        if(qrPrinting){
+            download();
+        }
+    }, [qrPrinting])
 
 
     return (
@@ -63,7 +92,7 @@ function ListRow(props){
                 <TableCell sx={{bgcolor: 'white'}}>
                     {uploaded_via ? <Chip variant='filled' sx={{bgcolor: 'primary.main', color: "#fff"}} label={uploaded_via}></Chip> : <Typography variant="body1" component={'span'}>Unidentified</Typography>}
                 </TableCell>
-                <TableCell sx={{bgcolor: 'white'}}>{last_updated ? format(last_updated?.stamp, "MMMM dd, yyyy") : 'No update found'}</TableCell>
+                <TableCell sx={{bgcolor: 'white'}}>{stamps[0]?.stamp ? format(stamps[0]?.stamp, "MMMM dd, yyyy") : 'No update found'}</TableCell>
                 <TableCell sx={{bgcolor: 'white'}}>
                     {status ? <Chip variant='filled' sx={{bgcolor: `${status === 'Pending' ? 'secondary.main' : 'primary.main'}`, color: "#fff"}} label={status}></Chip> : <Typography variant="body1" component={'span'}>Unidentified</Typography>}
                 </TableCell>
@@ -72,9 +101,13 @@ function ListRow(props){
                     borderBottomRightRadius: 50,
                     bgcolor: 'white'
                 }}>
-                    <IconButton>
+                    <IconButton onClick={()=>{qrCreate()}}>
                         <QrCode></QrCode>
                     </IconButton>
+                    {qrPrinting === true && 
+                    <Box sx={{opacity: 0, position: 'fixed', zIndex: '-1000'}}>
+                        <QrPrintTemp ref={ref} name={name} barangay={address} date={stamps[2]?.stamp}></QrPrintTemp>
+                    </Box>}
                 </TableCell>
             </TableRow>
             <Drawer className="drawer_dashboard" open={open} onClose={() => {setOpen(false)}} anchor="right" slotProps={{
@@ -139,14 +172,43 @@ function ListRow(props){
                                 )) : null}
                             </Stack>
                         </Stack>
-                        <Button fullWidth variant='contained' color="secondary" sx={{color: "#fff"}}>Verify</Button>
-                        <Button fullWidth variant='outlined' color="secondary">Print QR</Button>
+                        {status !== 'Verified' && <Button fullWidth variant='contained' color="secondary" sx={{color: "#fff"}}>Verify</Button>}
+                        <Button onClick={()=> {qrCreate()}} sx={{color: status === 'Verified' ? 'white' : 'secondary'}} fullWidth variant={status === 'Verified' ? 'contained' : 'outlined'} color="secondary">Print QR</Button>
                     </Stack>
                 </Box>
+                
             </Drawer>
         </Fragment>
     )
 };
+
+function QrPrintTemp(props){
+
+    const {name, barangay, date, ref} = props;
+    return (
+        <Box ref={ref} className="print_container">
+            <Box className="print_grid">
+                {Array.from({length: 12}, (_, i) => (
+                    <Stack key={i} direction={'column'} className="id_container">
+                        <Box className="QR_Container">
+                            <Image src="/images/testqr.jpg" fill alt="QR"></Image>
+                        </Box>
+                        <Stack p={1} direction={'column'} justifyContent={'center'}>
+                            <Typography variant="h6" fontSize={'1rem'} fontFamily={'Montserrat'} component={'div'} fontWeight={800} textAlign={'center'}>{name ? name : 'No name'}</Typography>
+                            <Typography variant="body2" fontSize={'.5rem'} component={'div'} textAlign={'center'}>Owner</Typography>
+                            <Divider flexItem sx={{width: "80%", mx: 'auto', my: 1}}/>
+                            <Typography whiteSpace={'wrap'} variant="body1" fontSize={'.5rem'} component={'div'} textAlign={'center'}>Barangay</Typography>
+                            <Typography whiteSpace={'wrap'} variant="body1" fontSize={'.5rem'} component={'div'} textAlign={'center'} mb={2}>Printed at {date ? format(date, "MMM dd, yyyy") + ' at ' +  format(date, "hh:mm a") : 'Not found'}</Typography>
+                            <Typography whiteSpace={'wrap'} variant="body2" fontSize={'.5rem'} component={'div'} textAlign={'center'}>This QR ID serves as your record in the passengers manifest. Please present this before boarding the fiber boat vessel.</Typography>
+                        </Stack>
+                        <Image src="/images/qr_wave1.png" alt="QRWAVE" className="qr_wave1" width={"300"} height="300" />
+                        <Image src="/images/qr_wave2.png" alt="QRWAVE" className="qr_wave2" width={"300"} height="300" />
+                    </Stack>
+                ))}
+            </Box>
+        </Box>
+    )
+}
 
 export default function DashboardLayout() {
 
@@ -192,8 +254,610 @@ export default function DashboardLayout() {
                     }
                 },
             ],
-            qr: 'asf1234'
-        }
+            qr: 'asf123417'
+        },
+        {
+            name: "Julee Gallentes Gabat",
+            gender: "Male",
+            dob: new Date("06/13/1990"),
+            address: "Poblacion, Jordan, Guimaras, Region VI (Western Visayas)",
+            uploaded_via: "manipesto.ph",
+            status: "Pending",
+            stamps: [
+                {
+                    label: 'Last updated',
+                    stamp: new Date('2025-04-04T15:15:10+00:00'),
+                    user: {
+                        name: "Juanita Dela Cruzita",
+                        photo: ''
+                    }
+                },
+                {
+                    label: 'Created',
+                    stamp: new Date('2025-04-04T15:15:10+00:00'),
+                    user: {
+                        name: "Juanita Dela Cruzita",
+                        photo: ''
+                    }
+                },
+                {
+                    label: 'Uploaded',
+                    stamp: new Date('2025-04-04T15:15:10+00:00'),
+                    user: {
+                        name: "Juanita Dela Cruzita",
+                        photo: ''
+                    }
+                },
+                {
+                    label: 'Verified',
+                    stamp: new Date('2025-04-11T15:15:10+00:00'),
+                    user: {
+                        name: "Juanita Dela Cruzita",
+                        photo: ''
+                    }
+                },
+            ],
+            qr: 'asf123416'
+        },
+        {
+            name: "George Gerona Jastia",
+            gender: "Male",
+            dob: "10/15/1988",
+            address: "Hoskyn, Jordan, Guimaras, Region VI (Western Visayas)",
+            uploaded_via: "manipesto.ph",
+            status: "Verified",
+            stamps: [
+            {
+                label: 'Last updated',
+                stamp: new Date('2025-04-04T15:15:10+00:00'),
+                user: {
+                    name: "Juanita Dela Cruzita",
+                    photo: ''
+                }
+            },
+            {
+                label: 'Created',
+                stamp: new Date('2025-04-04T15:15:10+00:00'),
+                user: {
+                    name: "Juanita Dela Cruzita",
+                    photo: ''
+                }
+            },
+            {
+                label: 'Uploaded',
+                stamp: new Date('2025-04-04T15:15:10+00:00'),
+                user: {
+                    name: "Juanita Dela Cruzita",
+                    photo: ''
+                }
+            },
+            {
+                label: 'Verified',
+                stamp: new Date('2025-04-11T15:15:10+00:00'),
+                user: {
+                    name: "Juanita Dela Cruzita",
+                    photo: ''
+                }
+            },
+            ],
+            qr: 'asf123415'
+        },
+        {
+            name: "Arcel Moreno",
+            gender: "Female",
+            dob: new Date("10/15/1988"),
+            address: "Hoskyn, Jordan, Guimaras, Region VI (Western Visayas)",
+            uploaded_via: "manipesto.ph",
+            status: "Verified",
+            stamps: [
+            {
+                label: 'Last updated',
+                stamp: new Date('2025-04-04T15:15:10+00:00'),
+                user: {
+                    name: "Juanita Dela Cruzita",
+                    photo: ''
+                }
+            },
+            {
+                label: 'Created',
+                stamp: new Date('2025-04-04T15:15:10+00:00'),
+                user: {
+                    name: "Juanita Dela Cruzita",
+                    photo: ''
+                }
+            },
+            {
+                label: 'Uploaded',
+                stamp: new Date('2025-04-04T15:15:10+00:00'),
+                user: {
+                    name: "Juanita Dela Cruzita",
+                    photo: ''
+                }
+            },
+            {
+                label: 'Verified',
+                stamp: new Date('2025-04-11T15:15:10+00:00'),
+                user: {
+                    name: "Juanita Dela Cruzita",
+                    photo: ''
+                }
+            },
+            ],
+            qr: 'asf123414'
+        },
+        {
+            name: "Leoniel Cadavos Novis",
+            gender: "Female",
+            dob: new Date("02/13/1986"),
+            address: "Rizal, Jordan, Guimaras, Region VI (Western Visayas)",
+            uploaded_via: "manipesto.ph",
+            status: "Verified",
+            stamps: [
+            {
+                label: 'Last updated',
+                stamp: new Date('2025-04-04T15:15:10+00:00'),
+                user: {
+                    name: "Juanita Dela Cruzita",
+                    photo: ''
+                }
+            },
+            {
+                label: 'Created',
+                stamp: new Date('2025-04-04T15:15:10+00:00'),
+                user: {
+                    name: "Juanita Dela Cruzita",
+                    photo: ''
+                }
+            },
+            {
+                label: 'Uploaded',
+                stamp: new Date('2025-04-04T15:15:10+00:00'),
+                user: {
+                    name: "Juanita Dela Cruzita",
+                    photo: ''
+                }
+            },
+            {
+                label: 'Verified',
+                stamp: new Date('2025-04-11T15:15:10+00:00'),
+                user: {
+                    name: "Juanita Dela Cruzita",
+                    photo: ''
+                }
+            },
+            ],
+            qr: 'asf123413'
+        },
+        {
+            name: "Ferly Estrangero Jardeleza",
+            gender: "Female",
+            dob: new Date("02/13/1986"),
+            address: "Rizal, Jordan, Guimaras, Region VI (Western Visayas)",
+            uploaded_via: "manipesto.ph",
+            status: "Pending",
+            stamps: [
+            {
+                label: 'Last updated',
+                stamp: new Date('2025-04-04T15:15:10+00:00'),
+                user: {
+                    name: "Juanita Dela Cruzita",
+                    photo: ''
+                }
+            },
+            {
+                label: 'Created',
+                stamp: new Date('2025-04-04T15:15:10+00:00'),
+                user: {
+                    name: "Juanita Dela Cruzita",
+                    photo: ''
+                }
+            },
+            {
+                label: 'Uploaded',
+                stamp: new Date('2025-04-04T15:15:10+00:00'),
+                user: {
+                    name: "Juanita Dela Cruzita",
+                    photo: ''
+                }
+            },
+            {
+                label: 'Verified',
+                stamp: new Date('2025-04-11T15:15:10+00:00'),
+                user: {
+                    name: "Juanita Dela Cruzita",
+                    photo: ''
+                }
+            },
+            ],
+            qr: 'asf123412'
+        },
+        {
+            name: "Mario Jalando-on Jardeleza",
+            gender: "Male",
+            dob: new Date("08/23/1965"),
+            address: "Alaguisoc, Jordan, Guimaras, Region VI (Western Visayas)",
+            uploaded_via: "manipesto.ph",
+            status: "Pending",
+            stamps: [
+            {
+                label: 'Last updated',
+                stamp: new Date('2025-04-04T15:15:10+00:00'),
+                user: {
+                    name: "Juanita Dela Cruzita",
+                    photo: ''
+                }
+            },
+            {
+                label: 'Created',
+                stamp: new Date('2025-04-04T15:15:10+00:00'),
+                user: {
+                    name: "Juanita Dela Cruzita",
+                    photo: ''
+                }
+            },
+            {
+                label: 'Uploaded',
+                stamp: new Date('2025-04-04T15:15:10+00:00'),
+                user: {
+                    name: "Juanita Dela Cruzita",
+                    photo: ''
+                }
+            },
+            {
+                label: 'Verified',
+                stamp: new Date('2025-04-11T15:15:10+00:00'),
+                user: {
+                    name: "Juanita Dela Cruzita",
+                    photo: ''
+                }
+            },
+            ],
+            qr: 'asf12349'
+        },
+        {
+            name: "Jules Romay Zaldivar",
+            gender: "Male",
+            dob: new Date("08/23/1965"),
+            address: "Poblacion, Jordan, Guimaras, Region VI (Western Visayas)",
+            uploaded_via: "manipesto.ph",
+            status: "Pending",
+            stamps: [
+            {
+                label: 'Last updated',
+                stamp: new Date('2025-04-04T15:15:10+00:00'),
+                user: {
+                    name: "Juanita Dela Cruzita",
+                    photo: ''
+                }
+            },
+            {
+                label: 'Created',
+                stamp: new Date('2025-04-04T15:15:10+00:00'),
+                user: {
+                    name: "Juanita Dela Cruzita",
+                    photo: ''
+                }
+            },
+            {
+                label: 'Uploaded',
+                stamp: new Date('2025-04-04T15:15:10+00:00'),
+                user: {
+                    name: "Juanita Dela Cruzita",
+                    photo: ''
+                }
+            },
+            {
+                label: 'Verified',
+                stamp: new Date('2025-04-11T15:15:10+00:00'),
+                user: {
+                    name: "Juanita Dela Cruzita",
+                    photo: ''
+                }
+            },
+            ],
+            qr: 'asf12348'
+        },
+        {
+            name: "Ruffa Mae Tababa Magno",
+            gender: "Female",
+            dob: new Date("05/01/1997"),
+            address: "Poblacion, Jordan, Guimaras, Region VI (Western Visayas)",
+            uploaded_via: "On-Site Reg.",
+            status: "Pending",
+            stamps: [
+            {
+                label: 'Last updated',
+                stamp: new Date('2025-04-04T15:15:10+00:00'),
+                user: {
+                    name: "Juanita Dela Cruzita",
+                    photo: ''
+                }
+            },
+            {
+                label: 'Created',
+                stamp: new Date('2025-04-04T15:15:10+00:00'),
+                user: {
+                    name: "Juanita Dela Cruzita",
+                    photo: ''
+                }
+            },
+            {
+                label: 'Uploaded',
+                stamp: new Date('2025-04-04T15:15:10+00:00'),
+                user: {
+                    name: "Juanita Dela Cruzita",
+                    photo: ''
+                }
+            },
+            {
+                label: 'Verified',
+                stamp: new Date('2025-04-11T15:15:10+00:00'),
+                user: {
+                    name: "Juanita Dela Cruzita",
+                    photo: ''
+                }
+            },
+            ],
+            qr: 'asf12347'
+        },
+        {
+            name: "Lourdes Ngo Magno",
+            gender: "Male",
+            dob: new Date("08/11/1953"),
+            address: "Poblacion, Jordan, Guimaras, Region VI (Western Visayas)",
+            uploaded_via: "On-Site Reg.",
+            status: "Verified",
+            stamps: [
+            {
+                label: 'Last updated',
+                stamp: new Date('2025-04-04T15:15:10+00:00'),
+                user: {
+                    name: "Juanita Dela Cruzita",
+                    photo: ''
+                }
+            },
+            {
+                label: 'Created',
+                stamp: new Date('2025-04-04T15:15:10+00:00'),
+                user: {
+                    name: "Juanita Dela Cruzita",
+                    photo: ''
+                }
+            },
+            {
+                label: 'Uploaded',
+                stamp: new Date('2025-04-04T15:15:10+00:00'),
+                user: {
+                    name: "Juanita Dela Cruzita",
+                    photo: ''
+                }
+            },
+            {
+                label: 'Verified',
+                stamp: new Date('2025-04-11T15:15:10+00:00'),
+                user: {
+                    name: "Juanita Dela Cruzita",
+                    photo: ''
+                }
+            },
+            ],
+            qr: 'asf12346'
+        },
+        {
+            name: "Rodrigo Pillora Jr",
+            gender: "Male",
+            dob: new Date("08/19/1953"),
+            address: "San Miguel, Jordan, Guimaras, Region VI (Western Visayas)",
+            uploaded_via: "On-Site Reg.",
+            status: "Verified",
+            stamps: [
+            {
+                label: 'Last updated',
+                stamp: new Date('2025-04-04T15:15:10+00:00'),
+                user: {
+                    name: "Juanita Dela Cruzita",
+                    photo: ''
+                }
+            },
+            {
+                label: 'Created',
+                stamp: new Date('2025-04-04T15:15:10+00:00'),
+                user: {
+                    name: "Juanita Dela Cruzita",
+                    photo: ''
+                }
+            },
+            {
+                label: 'Uploaded',
+                stamp: new Date('2025-04-04T15:15:10+00:00'),
+                user: {
+                    name: "Juanita Dela Cruzita",
+                    photo: ''
+                }
+            },
+            {
+                label: 'Verified',
+                stamp: new Date('2025-04-11T15:15:10+00:00'),
+                user: {
+                    name: "Juanita Dela Cruzita",
+                    photo: ''
+                }
+            },
+            ],
+            qr: 'asf12345'
+        },   
+        {
+            name: "Honey June Artuz Gabiota",
+            gender: "Female",
+            dob: new Date("06/10/2000"),
+            address: "Alaguisoc, Jordan, Guimaras, Region VI (Western Visayas)",
+            uploaded_via: "On-Site Reg.",
+            status: "Verified",
+            stamps: [
+            {
+                label: 'Last updated',
+                stamp: new Date('2025-04-04T15:15:10+00:00'),
+                user: {
+                    name: "Juanita Dela Cruzita",
+                    photo: ''
+                }
+            },
+            {
+                label: 'Created',
+                stamp: new Date('2025-04-04T15:15:10+00:00'),
+                user: {
+                    name: "Juanita Dela Cruzita",
+                    photo: ''
+                }
+            },
+            {
+                label: 'Uploaded',
+                stamp: new Date('2025-04-04T15:15:10+00:00'),
+                user: {
+                    name: "Juanita Dela Cruzita",
+                    photo: ''
+                }
+            },
+            {
+                label: 'Verified',
+                stamp: new Date('2025-04-11T15:15:10+00:00'),
+                user: {
+                    name: "Juanita Dela Cruzita",
+                    photo: ''
+                }
+            },
+            ],
+            qr: 'asf12344'
+        },   
+        {
+            name: "Arnel Jordan Jetorino",
+            gender: "Male",
+            dob: new Date("10/30/1974"),
+            address: "Alaguisoc, Jordan, Guimaras, Region VI (Western Visayas)",
+            uploaded_via: "On-Site Reg.",
+            status: "Verified",
+            stamps: [
+            {
+                label: 'Last updated',
+                stamp: new Date('2025-04-04T15:15:10+00:00'),
+                user: {
+                    name: "Juanita Dela Cruzita",
+                    photo: ''
+                }
+            },
+            {
+                label: 'Created',
+                stamp: new Date('2025-04-04T15:15:10+00:00'),
+                user: {
+                    name: "Juanita Dela Cruzita",
+                    photo: ''
+                }
+            },
+            {
+                label: 'Uploaded',
+                stamp: new Date('2025-04-04T15:15:10+00:00'),
+                user: {
+                    name: "Juanita Dela Cruzita",
+                    photo: ''
+                }
+            },
+            {
+                label: 'Verified',
+                stamp: new Date('2025-04-11T15:15:10+00:00'),
+                user: {
+                    name: "Juanita Dela Cruzita",
+                    photo: ''
+                }
+            },
+            ],
+            qr: 'asf12343'
+        },   
+        {
+            name: "Pearl Ivy Bacio Eslabon",
+            gender: "Female",
+            dob: new Date("06/11/1993"),
+            address: "Balcon Maravilla, Jordan, Guimaras, Region VI (Western Visayas)",
+            uploaded_via: "On-Site Reg.",
+            status: "Pending",
+            stamps: [
+            {
+                label: 'Last updated',
+                stamp: new Date('2025-04-04T15:15:10+00:00'),
+                user: {
+                    name: "Juanita Dela Cruzita",
+                    photo: ''
+                }
+            },
+            {
+                label: 'Created',
+                stamp: new Date('2025-04-04T15:15:10+00:00'),
+                user: {
+                    name: "Juanita Dela Cruzita",
+                    photo: ''
+                }
+            },
+            {
+                label: 'Uploaded',
+                stamp: new Date('2025-04-04T15:15:10+00:00'),
+                user: {
+                    name: "Juanita Dela Cruzita",
+                    photo: ''
+                }
+            },
+            {
+                label: 'Verified',
+                stamp: new Date('2025-04-11T15:15:10+00:00'),
+                user: {
+                    name: "Juanita Dela Cruzita",
+                    photo: ''
+                }
+            },
+            ],
+            qr: 'asf12342'
+        },   
+        {
+            name: "Julienne Anne Gravo",
+            gender: "Female",
+            dob: new Date("10/06/2003"),
+            address: "Balcon Maravilla, Jordan, Guimaras, Region VI (Western Visayas)",
+            uploaded_via: "On-Site Reg.",
+            status: "Pending",
+            stamps: [
+            {
+                label: 'Last updated',
+                stamp: new Date('2025-04-04T15:15:10+00:00'),
+                user: {
+                    name: "Juanita Dela Cruzita",
+                    photo: ''
+                }
+            },
+            {
+                label: 'Created',
+                stamp: new Date('2025-04-04T15:15:10+00:00'),
+                user: {
+                    name: "Juanita Dela Cruzita",
+                    photo: ''
+                }
+            },
+            {
+                label: 'Uploaded',
+                stamp: new Date('2025-04-04T15:15:10+00:00'),
+                user: {
+                    name: "Juanita Dela Cruzita",
+                    photo: ''
+                }
+            },
+            {
+                label: 'Verified',
+                stamp: new Date('2025-04-11T15:15:10+00:00'),
+                user: {
+                    name: "Juanita Dela Cruzita",
+                    photo: ''
+                }
+            },
+            ],
+            qr: 'asf12341'
+        },
     ]
 
     return (
@@ -333,10 +997,8 @@ export default function DashboardLayout() {
                                 alignItems: "center",
                                 mb: 2
                             }}>
-                                <Box sx={{
-                                    textWrap: "nowrap"
-                                }}>
-                                <Typography variant='h3' component={"h2"} color="secondary">Barangay Records</Typography>
+                                <Box sx={{whiteSpace: {xs: 'wrap', md: 'nowrap'}}}>
+                                    <Typography variant='h3' component={"h2"} color="secondary">Barangay Records</Typography>
                                 </Box>
                                 <Box sx={{
                                     width: "100%",
@@ -375,9 +1037,7 @@ export default function DashboardLayout() {
                                 alignItems: "center",
                                 mb: 2
                             }}>
-                                <Box sx={{
-                                    textWrap: "nowrap"
-                                }}>
+                                <Box sx={{whiteSpace: {xs: 'wrap', md: 'nowrap'}}}>
                                 <Typography variant='h3' component={"h2"} color="secondary">Profile Records</Typography>
                                 </Box>
                                 <Box sx={{

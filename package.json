@@ -16,6 +16,7 @@
     "axios": "^1.13.6",
     "date-fns": "^4.1.0",
     "html5-qrcode": "^2.3.8",
+    "modern-screenshot": "^4.6.8",
     "next": "16.2.1",
     "papaparse": "^5.5.3",
     "qr-scanner": "^1.4.2",

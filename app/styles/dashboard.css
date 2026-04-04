@@ -10,76 +10,128 @@ body {
 
 .dashboard_container {
   transition: 0.3s all ease;
+  margin-top: 64px;
 }
 
-body:has(.sidebar.expand) .dashboard_container {
-  margin-left: 300px;
+.appbar {
+  display: flex !important;
 }
 
-body:has(.sidebar.collapsed) .dashboard_container {
-  margin-left: 84px;
+@media only screen and (min-width: 768px) {
+  .dashboard_container {
+    margin-top: 0;
+  }
+  body:has(.sidebar.expand) .dashboard_container {
+    margin-left: 300px;
+  }
+  body:has(.sidebar.collapsed) .dashboard_container {
+    margin-left: 84px;
+  }
+  .appbar {
+    display: none !important;
+  }
 }
-
 .sidebar .MuiPaper-root {
   transition: 0.3s all ease-in-out !important;
 }
 .sidebar .avatar {
   cursor: pointer;
 }
-.sidebar .name, .sidebar .designation, .sidebar .avatar_container, .sidebar .avatar, .sidebar .clock_outer_container, .sidebar .clock_container, .sidebar .logout_text, .sidebar .logout_icon, .sidebar .logout_button, .sidebar .located_on, .sidebar .located_on .MuiTypography-root, .sidebar .located_on svg {
+.sidebar .name, .sidebar .designation, .sidebar .avatar_container, .sidebar .avatar, .sidebar .clock_outer_container, .sidebar .clock_container, .sidebar .logout_text, .sidebar .logout_icon, .sidebar .logout_button, .sidebar .barangay, .sidebar .located_on, .sidebar .located_on .MuiTypography-root, .sidebar .located_on svg, .sidebar .sidebar_link {
   transition: 0.3s all ease;
   overflow: hidden;
 }
 .sidebar .clock_outer_container, .sidebar .clock_container, .sidebar .clock_image {
   transition: 0.3s all ease;
 }
-.sidebar.expand .MuiPaper-root {
-  width: 300px !important;
+.sidebar .sidebar_link {
+  flex-direction: row;
+  padding: 12px 24px;
+  align-items: center;
 }
-.sidebar.expand .avatar_container {
-  max-height: 200px;
-}
-.sidebar.expand .clock_image {
-  opacity: 1;
-}
-.sidebar.expand .logout_text {
-  max-width: 100px;
-}
-.sidebar.expand .located_on svg {
+.sidebar .sidebar_link .MuiSvgIcon-root {
   margin-right: 8px;
-  margin-left: -4px;
+  transition: 0.3s all ease;
 }
-.sidebar.expand .located_on {
-  max-width: 300px;
+.sidebar .sidebar_link .MuiTypography-root {
+  overflow: hidden;
+  transition: 0.3s all ease;
+  white-space: nowrap;
 }
-.sidebar.expand .located_on .MuiTypography-root {
-  max-width: 200px;
-  max-height: 100px;
+.sidebar .sidebar_link {
+  cursor: pointer;
 }
-.sidebar.collapsed .MuiPaper-root {
-  width: 84px !important;
+.sidebar .sidebar_link:hover {
+  background-color: #9f55f5;
 }
-.sidebar.collapsed .avatar_container {
-  padding-top: 32px;
-  max-height: 50px;
+.sidebar .sidebar_link:hover .MuiSvgIcon-root, .sidebar .sidebar_link:hover .MuiTypography-root {
+  color: #fff;
 }
-.sidebar.collapsed .clock_image {
-  opacity: 0;
+.sidebar {
+  display: none;
 }
-.sidebar.collapsed .logout_text {
-  max-width: 0px;
-}
-.sidebar.collapsed .located_on svg {
-  margin-right: 0px;
-  margin-left: 0px;
-}
-.sidebar.collapsed .logout_button {
-  border-color: transparent;
-}
-.sidebar.collapsed .located_on {
-  max-width: 84px;
-}
-.sidebar.collapsed .located_on .MuiTypography-root {
-  max-width: 0px;
-  max-height: 0px;
+@media only screen and (min-width: 768px) {
+  .sidebar {
+    display: block;
+  }
+  .sidebar.expand .MuiPaper-root {
+    width: 300px !important;
+  }
+  .sidebar.expand .avatar_container {
+    max-height: 300px;
+  }
+  .sidebar.expand .clock_image {
+    opacity: 1;
+  }
+  .sidebar.expand .logout_text {
+    max-width: 100px;
+  }
+  .sidebar.expand .located_on svg {
+    margin-right: 8px;
+    margin-left: -4px;
+  }
+  .sidebar.expand .located_on {
+    max-width: 300px;
+  }
+  .sidebar.expand .located_on .MuiTypography-root {
+    max-width: 200px;
+    max-height: 100px;
+  }
+  .sidebar.expand .sidebar_link .MuiTypography-root {
+    max-width: 200px;
+  }
+  .sidebar.collapsed .sidebar_link .MuiTypography-root {
+    max-width: 0px;
+  }
+  .sidebar.collapsed .sidebar_link .MuiSvgIcon-root {
+    margin-right: 0px;
+    margin-left: 5px;
+  }
+  .sidebar.collapsed .MuiPaper-root {
+    width: 84px !important;
+  }
+  .sidebar.collapsed .avatar_container {
+    padding-top: 32px;
+    max-height: 50px;
+  }
+  .sidebar.collapsed .clock_image {
+    opacity: 0;
+  }
+  .sidebar.collapsed .logout_text {
+    max-width: 0px;
+  }
+  .sidebar.collapsed .located_on svg {
+    margin-right: 0px;
+    margin-left: 0px;
+  }
+  .sidebar.collapsed .logout_button {
+    border-color: transparent;
+  }
+  .sidebar.collapsed .located_on {
+    max-width: 84px;
+  }
+  .sidebar.collapsed .located_on .MuiTypography-root {
+    max-width: 0px;
+    max-height: 0px;
+  }
 }

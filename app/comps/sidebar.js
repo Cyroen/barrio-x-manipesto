@@ -10,6 +10,7 @@ import { useEffect, useRef, useState } from "react";
 import { CloudUpload, Home, LocationOn, Logout } from "@mui/icons-material";
 import Image from "next/image";
 import {format} from "date-fns"
+import Link from "next/link";
 
 
 function Sidebar(props) {
@@ -78,11 +79,11 @@ function Sidebar(props) {
                 </Stack>
                 <Divider />
                 <Stack py={3} gap={0}>
-                    <Stack className="sidebar_link">
+                    <Stack className="sidebar_link" component={Link} href="/" sx={{textDecoration: 'none'}}>
                         <Home></Home>
                         <Typography variant="h6" component={'div'}>Home</Typography>
                     </Stack>
-                    <Stack className="sidebar_link">
+                    <Stack className="sidebar_link" component={Link} href="/upload" sx={{textDecoration: 'none'}}>
                         <CloudUpload></CloudUpload>
                         <Typography variant="h6" component={'div'}>Batch Upload</Typography>
                     </Stack>
@@ -190,6 +191,16 @@ function Sidebar(props) {
                                         <Typography textAlign={'right'} variant="body1">Sta Teresa, Jordan, Guimaras</Typography>
                                     </Stack>
                                     <Divider/>
+                                    <Stack py={3} gap={2}>
+                                        <Stack className="sidebar_link" direction={'row'} alignItems={'center'} gap={2} component={Link} href="/" sx={{textDecoration: 'none'}}>
+                                            <Home></Home>
+                                            <Typography variant="h6" component={'div'}>Home</Typography>
+                                        </Stack>
+                                        <Stack className="sidebar_link" direction={'row'} alignItems={'center'} gap={2} component={Link} href="/upload" sx={{textDecoration: 'none'}}>
+                                            <CloudUpload></CloudUpload>
+                                            <Typography variant="h6" component={'div'}>Batch Upload</Typography>
+                                        </Stack>
+                                    </Stack>
                                     <Button variant="text" startIcon={<Logout></Logout>}>Logout</Button>
                                 </Stack>
                             </Menu>

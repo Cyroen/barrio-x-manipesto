@@ -121,8 +121,8 @@ export default function UploadPage() {
                         ml: 3
                     }}></Box>
                 </Box>
-                <Stack direction={'row'} gap={2}>
-                    <Stack flex={1} direction={'row'} {...getRootProps({className: 'dropzone'})}>
+                <Stack direction={'row'} gap={2} flexWrap={'wrap'}>
+                    <Stack flex={1} direction={'row'} {...getRootProps({className: 'dropzone'})} minWidth={300}>
                         <input {...getInputProps()} />
                         {/* <input type="file" required={true} style ={{opacity: 0, width: 0}} ref={hiddenInputRef}/> */}
                         <Stack justifyContent={'center'} alignItems={'center'} sx={{
@@ -143,13 +143,13 @@ export default function UploadPage() {
                             }}>
                                 <Image loading="eager" src="/images/upload.webp" fill alt="Upload" style={{objectFit: 'contain'}}></Image>
                             </Box>
-                            <Typography variant="h5">Drop or select file here</Typography>
-                            <Typography variant="body1" maxWidth={'50%'} textAlign={'center'} mt={2}>Only CSV or XLS(X) files are supported for upload.
+                            <Typography mx={3} variant="h5" textAlign={'center'}>Drop or select file here</Typography>
+                            <Typography mx={3} variant="body1" maxWidth={'50%'} textAlign={'center'} mt={2}>Only CSV or XLS(X) files are supported for upload.
                             </Typography>
                         </Stack>
                     </Stack>
-                    <Stack flex={1} direction={'row'}>
-                        <Paper sx={{width: 'calc(100% - 40px * 2)', height: 'calc(100% - 24px * 2)', borderRadius: 4, py: 3, px: 2, display: 'flex', flexDirection: 'column'}}>
+                    <Stack flex={1} direction={'row'} minWidth={300}>
+                        <Paper sx={{width: '100%', height: 'calc(100% - 24px * 2)', borderRadius: 4, py: 3, px: 2, display: 'flex', flexDirection: 'column'}}>
                             <Typography variant="h4" component={'div'} mx={2}>Results</Typography>
                             <Stack direction={'column'} gap={2} flex={1} overflow={'auto'} maxHeight={500} mt={2}>
                                 {jsonData ? jsonData.map((a, i) => {
@@ -157,7 +157,7 @@ export default function UploadPage() {
                                     return (
                                         <RecordResult key={`${a?.First} ${a?.Middle} ${a?.Last} ${a?.Suffix} ${i}`} name={`${a?.First} ${a?.Middle} ${a?.Last} ${a?.Suffix}`} birthday={a?.Birthdate} sex={a?.Sex}></RecordResult>
                                     )
-                                }) : <Typography component={'div'} variant="body1" m="auto">
+                                }) : <Typography component={'div'} variant="body1" m="auto" textAlign={'center'}>
                                     No files have been uploaded yet.
                                 </Typography>}                             
                             </Stack>
