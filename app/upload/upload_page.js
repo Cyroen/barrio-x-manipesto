@@ -155,7 +155,7 @@ export default function UploadPage() {
                                 {jsonData ? jsonData.map((a, i) => {
                                     console.log(i);
                                     return (
-                                        <RecordResult key={`${a?.First} ${a?.Middle} ${a?.Last} ${a?.Suffix} ${i}`} name={`${a?.First} ${a?.Middle} ${a?.Last} ${a?.Suffix}`} birthday={a?.Birthdate} sex={a?.Sex}></RecordResult>
+                                        <RecordResult key={`${a?.First} ${a?.Middle} ${a?.Last} ${a?.Suffix} ${i}`} name={`${a?.First} ${a?.Middle} ${a?.Last} ${a?.Suffix ? a?.Suffix : ''}`} birthday={a?.Birthdate} sex={a?.Sex}></RecordResult>
                                     )
                                 }) : <Typography component={'div'} variant="body1" m="auto" textAlign={'center'}>
                                     No files have been uploaded yet.
