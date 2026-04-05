@@ -55,27 +55,27 @@ function Sidebar(props) {
                 }
             }} variant="permanent" className={`${open ? 'expand' : 'collapsed'} sidebar`} open={open}>
                 <Stack className="avatar_container" direction={'column'} gap={1} p={2} justifyContent={'center'} alignItems={'center'}>
-                    <Avatar className="avatar" sx={{
+                    <Avatar src="https://i.pinimg.com/1200x/26/fd/39/26fd3945841cd5fe533f41b26c36fb19.jpg" className="avatar" sx={{
                         width: open ? 120 : 40,
                         height: open ? 120 : 40
                     }} onClick={()=>setOpen(!open)}>
                     </Avatar>
-                    <Typography className="name" variant="h5" component={'p'}>Name here</Typography>
-                    <Chip className="designation" label="Designation"></Chip>
+                    <Typography className="name" variant="h5" component={'p'} textAlign={'center'}>Juan Dela Cruz</Typography>
+                    <Chip className="designation" label="DILG MLGOO"></Chip>
                     <Box sx={{
                         width: '100%',
                         borderRadius: 50,
                         bgcolor: 'primary.main',
                         p: 1,
                         textAlign: 'center'
-                    }} className="barangay"><Typography variant="h6" component={'span'} color="#fff" textAlign={'center'} width={'100%'}>Barangay</Typography></Box>
+                    }} className="barangay"><Typography variant="h6" component={'span'} color="#fff" textAlign={'center'} width={'100%'}>Municipality/City</Typography></Box>
                 </Stack>
                 <Divider />
                 <Stack className="located_on" mx="auto" direction={'row'} p={2} justifyContent={'center'} alignItems={'center'}>
                     <Tooltip title="Sta. Teresa, Jordan, Guimaras">
                         <LocationOn></LocationOn>
                     </Tooltip>
-                    <Typography variant="body1" component={'p'}>Sta. Teresa, Jordan, Guimaras</Typography>
+                    <Typography variant="body1" component={'p'}>Jordan, Guimaras</Typography>
                 </Stack>
                 <Divider />
                 <Stack py={3} gap={0}>

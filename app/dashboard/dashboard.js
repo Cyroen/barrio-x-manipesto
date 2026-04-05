@@ -19,16 +19,18 @@ function CollapseButton(props){
                 {label}
             </Button>
             <Collapse in={open} timeout="auto" sx={{transition: '250ms all ease', bgcolor: 'background.main', height: open ? 'auto' : '0px', overflow: 'hidden'}}>
-                <Box p={2}>
-                    <Stack direction={'row'} alignItems={'flex-start'} gap={1} flex={1}>
+                <Box>
+                    <Stack p={2} sx={{bgcolor: 'primary.main', borderBottomLeftRadius: '10px', borderBottomRightRadius: '10px'}} direction={'row'} alignItems={'flex-start'} gap={1} flex={1}>
                         <Avatar src={photo ? photo : 'Photo'} sx={{width: 42, height: 42}}></Avatar>
-                        <Typography my="auto" variant="body1" fontWeight={800} component={'span'} flex={1}>{name ? name : "No name found"}</Typography>
+                        <Stack direction={'column'} gap={0}>
+                            <Typography color="white" my="auto" variant="body1" fontWeight={800} component={'span'} flex={1}>{name ? name : "No name found"}</Typography>
+                            <Typography color="white" variant="body2" component={'span'}>{date ? format(date, "MMMM dd, yyyy") + ' at ' +  format(date, "hh:mm a") : 'Not found'}</Typography>
+                        </Stack>
                     </Stack>
-                    <Divider sx={{borderColor: "primary.main", my: 2}}/>
-                    <Box sx={{py: 1, px: 2, borderRadius: 2, bgcolor: 'primary.main', display: 'flex', flexDirection: 'column', gap: .5}}>
+                    {/* <Box sx={{py: 1, px: 2, borderRadius: 2, bgcolor: 'primary.main', display: 'flex', flexDirection: 'column', gap: .5, mt: 1}}>
                         <Typography color="white" variant="h6" component={'span'}>{label ? label + ' on' : 'Not found'}</Typography>
                         <Typography color="white" variant="body2" component={'span'}>{date ? format(date, "MMMM dd, yyyy") + ' at ' +  format(date, "hh:mm a") : 'Not found'}</Typography>
-                    </Box>
+                    </Box> */}
                 </Box>
             </Collapse>
         </Box>
@@ -36,7 +38,7 @@ function CollapseButton(props){
 }
 
 function ListRow(props){
-    const { name, gender, dob, address, uploaded_via, last_updated, status, stamps, qr, } = props?.data;
+    const { name, gender, dob, address, uploaded_via, last_updated, status, stamps, qr, photo } = props?.data;
     const [open, setOpen] = useState(false);
     const [qrPrinting, setQrPrinting] = useState(false);
 
@@ -133,7 +135,7 @@ function ListRow(props){
                                 width: 120,
                                 height: 120,
                                 mx: 'auto',
-                            }}></Avatar>
+                            }} src={photo ? photo : ''}></Avatar>
                             <Typography mx="auto" variant="h5" component={'div'}>{name ? name : 'No Name Found'}</Typography>
                             {status ? <Chip sx={{bgcolor: `${status === 'Pending' ? 'secondary.main' : 'primary.main'}`, color: "#fff", px: 3, fontWeight: 600, width: 'max-content', textTransform: 'uppercase'}} variant="filled" label={status} size="large"></Chip> : <Typography variant="body1" component={'span'}>Unidentified</Typography>}
                         </Stack>
@@ -198,7 +200,7 @@ function QrPrintTemp(props){
                             <Typography whiteSpace={'wrap'} variant="body2" fontSize={'.5rem'} component={'div'} textAlign={'center'}>Owner</Typography>
                             <Divider flexItem sx={{width: "80%", mx: 'auto', my: 0.5}}/>
                             <Typography whiteSpace={'wrap'} variant="body1" fontSize={'.5rem'} component={'div'} textAlign={'center'}>Barangay</Typography>
-                            <Typography whiteSpace={'wrap'} variant="body1" fontSize={'.5rem'} component={'div'} textAlign={'center'} mb={2}>Printed at {date ? format(date, "MMM dd, yyyy") + ' at ' +  format(date, "hh:mm a") : 'Not found'}</Typography>
+                            <Typography whiteSpace={'wrap'} variant="body1" fontSize={'.5rem'} component={'div'} textAlign={'center'} mb={2}>Printed on {date ? format(date, "MMM dd, yyyy") + ' at ' +  format(date, "hh:mm a") : 'Not found'}</Typography>
                             <Typography whiteSpace={'wrap'} variant="body2" fontSize={'.5rem'} component={'div'} textAlign={'center'}>This QR ID serves as your record in the passengers manifest. Please present this before boarding the fiber boat vessel.</Typography>
                         </Stack>
                         <Image src="/images/qr_wave1.png" alt="QRWAVE" className="qr_wave1" width={"300"} height="300" />
@@ -215,11 +217,12 @@ export default function DashboardLayout() {
     const data = [
         {
             name: 'Juan Dela Cruz',
-            gender: 'Female',
+            gender: 'Male',
             dob: new Date('1/30/2000'),
             address: 'Sta. Teresa, Jordan, Guimaras',
             uploaded_via: 'manipesto.ph',
             status: 'Verified',
+            photo: 'https://i.pinimg.com/736x/54/1a/2e/541a2ef55b87a5f602c3d5d5429b7469.jpg',
             stamps: [
                 {
                     label: 'Last updated',
@@ -263,6 +266,7 @@ export default function DashboardLayout() {
             address: "Poblacion, Jordan, Guimaras, Region VI (Western Visayas)",
             uploaded_via: "manipesto.ph",
             status: "Pending",
+            photo: "https://i.pinimg.com/736x/8a/91/bf/8a91bf7cede4e87ad9d4fac6ffec4baa.jpg",
             stamps: [
                 {
                     label: 'Last updated',
@@ -306,6 +310,7 @@ export default function DashboardLayout() {
             address: "Hoskyn, Jordan, Guimaras, Region VI (Western Visayas)",
             uploaded_via: "manipesto.ph",
             status: "Verified",
+            photo: "https://i.pinimg.com/736x/f6/c1/02/f6c10243e8422856f53e2deff4bc3bda.jpg",
             stamps: [
             {
                 label: 'Last updated',
@@ -349,6 +354,7 @@ export default function DashboardLayout() {
             address: "Hoskyn, Jordan, Guimaras, Region VI (Western Visayas)",
             uploaded_via: "manipesto.ph",
             status: "Verified",
+            photo: "https://i.pinimg.com/736x/7e/6a/f3/7e6af3330209b8b36f5834411bfba5d5.jpg",
             stamps: [
             {
                 label: 'Last updated',
@@ -392,6 +398,7 @@ export default function DashboardLayout() {
             address: "Rizal, Jordan, Guimaras, Region VI (Western Visayas)",
             uploaded_via: "manipesto.ph",
             status: "Verified",
+            photo: "https://i.pinimg.com/736x/88/9f/d1/889fd1f50f79e55cda2a28037c6c7774.jpg",
             stamps: [
             {
                 label: 'Last updated',
@@ -435,6 +442,7 @@ export default function DashboardLayout() {
             address: "Rizal, Jordan, Guimaras, Region VI (Western Visayas)",
             uploaded_via: "manipesto.ph",
             status: "Pending",
+            photo: "https://i.pinimg.com/1200x/a5/f9/eb/a5f9ebc89551c1d9c8c571a148ec5ec0.jpg",
             stamps: [
             {
                 label: 'Last updated',
@@ -478,6 +486,7 @@ export default function DashboardLayout() {
             address: "Alaguisoc, Jordan, Guimaras, Region VI (Western Visayas)",
             uploaded_via: "manipesto.ph",
             status: "Pending",
+            photo: "https://i.pinimg.com/736x/2b/e3/99/2be399dc5eb8b1b94564ec69c5d8ce38.jpg",
             stamps: [
             {
                 label: 'Last updated',
@@ -521,6 +530,7 @@ export default function DashboardLayout() {
             address: "Poblacion, Jordan, Guimaras, Region VI (Western Visayas)",
             uploaded_via: "manipesto.ph",
             status: "Pending",
+            photo: "https://i.pinimg.com/1200x/05/6d/28/056d2826596ff6f4d10cfd1074d4d0f2.jpg",
             stamps: [
             {
                 label: 'Last updated',
@@ -564,6 +574,7 @@ export default function DashboardLayout() {
             address: "Poblacion, Jordan, Guimaras, Region VI (Western Visayas)",
             uploaded_via: "On-Site Reg.",
             status: "Pending",
+            photo: "https://i.pinimg.com/736x/bc/6e/76/bc6e76ebe34499441b7f2baaedfdded5.jpg",
             stamps: [
             {
                 label: 'Last updated',
@@ -607,6 +618,7 @@ export default function DashboardLayout() {
             address: "Poblacion, Jordan, Guimaras, Region VI (Western Visayas)",
             uploaded_via: "On-Site Reg.",
             status: "Verified",
+            photo: "https://i.pinimg.com/1200x/5c/f4/38/5cf43886f34d41bebd260ae73d01671d.jpg",
             stamps: [
             {
                 label: 'Last updated',
@@ -650,6 +662,7 @@ export default function DashboardLayout() {
             address: "San Miguel, Jordan, Guimaras, Region VI (Western Visayas)",
             uploaded_via: "On-Site Reg.",
             status: "Verified",
+            photo: "https://i.pinimg.com/736x/8a/91/bf/8a91bf7cede4e87ad9d4fac6ffec4baa.jpg",
             stamps: [
             {
                 label: 'Last updated',
@@ -693,6 +706,7 @@ export default function DashboardLayout() {
             address: "Alaguisoc, Jordan, Guimaras, Region VI (Western Visayas)",
             uploaded_via: "On-Site Reg.",
             status: "Verified",
+            photo: "https://i.pinimg.com/1200x/84/d4/ef/84d4efd9e8e1fb03275c84e6d45058e5.jpg",
             stamps: [
             {
                 label: 'Last updated',
@@ -736,6 +750,7 @@ export default function DashboardLayout() {
             address: "Alaguisoc, Jordan, Guimaras, Region VI (Western Visayas)",
             uploaded_via: "On-Site Reg.",
             status: "Verified",
+            photo: "https://i.pinimg.com/736x/3e/57/6b/3e576bcd6dd6b09161f1c63037939515.jpg",
             stamps: [
             {
                 label: 'Last updated',
@@ -779,6 +794,7 @@ export default function DashboardLayout() {
             address: "Balcon Maravilla, Jordan, Guimaras, Region VI (Western Visayas)",
             uploaded_via: "On-Site Reg.",
             status: "Pending",
+            photo: "https://i.pinimg.com/1200x/b6/a1/54/b6a15459718548fee93f3aaf498c3a29.jpg",
             stamps: [
             {
                 label: 'Last updated',
@@ -822,6 +838,7 @@ export default function DashboardLayout() {
             address: "Balcon Maravilla, Jordan, Guimaras, Region VI (Western Visayas)",
             uploaded_via: "On-Site Reg.",
             status: "Pending",
+            photo: "https://i.pinimg.com/1200x/b6/a1/54/b6a15459718548fee93f3aaf498c3a29.jpg",
             stamps: [
             {
                 label: 'Last updated',
@@ -860,6 +877,14 @@ export default function DashboardLayout() {
         },
     ]
 
+    const brgy_data = [
+        {label: "Alaguisoc", count: '1,421'},
+        {label: "Balcon Melliza", count: '1,334'},
+        {label: "Bugnay", count: '1,200'},
+        {label: "Buluangan", count: '1,052'},
+        {label: "Balcon Maravilla", count: '1,163'},
+    ]
+
     return (
         <Box px={{xs: 0, md: 2}} py={5} width={'100%'} className="dashboard_container">
             <Container>
@@ -876,7 +901,7 @@ export default function DashboardLayout() {
                             <Typography color='white' variant="h6" component={'h2'} mb={2}>
                                 Total No. of Records
                             </Typography>
-                            <Typography color='white' fontWeight={800} variant="h2" component={'span'}>1,000</Typography>
+                            <Typography color='white' fontWeight={800} variant="h2" component={'span'}>40,000</Typography>
                             <Typography color='white' variant="subtitle2" component={'span'}>*Includes all verified and unverified profile records from all the data sources.</Typography>
                         </Box>
                         <Paper sx={{
@@ -925,8 +950,8 @@ export default function DashboardLayout() {
                             series={[
                                 {
                                     data: [
-                                        { id: 0, value: 10, label: 'series A', color: '#9f55f5' },
-                                        { id: 1, value: 15, label: 'series B', color: '#f58a55' },
+                                        { id: 0, value: 10, label: 'Male', color: '#9f55f5' },
+                                        { id: 1, value: 15, label: 'Female', color: '#f58a55' },
                                     ],
                                     innerRadius: 50,
                                     outerRadius: 100,
@@ -967,8 +992,8 @@ export default function DashboardLayout() {
                             series={[
                                 {
                                     data: [
-                                        { id: 0, value: 10, label: 'series A', color: '#9f55f5' },
-                                        { id: 1, value: 15, label: 'series B', color: '#f58a55' },
+                                        { id: 0, value: 40, label: 'Verified', color: '#9f55f5' },
+                                        { id: 1, value: 25, label: 'Pending', color: '#f58a55' },
                                     ],
                                     innerRadius: 50,
                                     outerRadius: 100,
@@ -1008,17 +1033,19 @@ export default function DashboardLayout() {
                                 }}></Box>
                             </Box>
                             <Stack direction={'row'} gap={2} flexWrap={'wrap'}>
-                                <Paper sx={{
+                                {brgy_data && brgy_data.map((a, i) => (
+                                    <Paper key={a?.label} sx={{
                                     borderRadius: 3,
                                     p: 3,
                                     flex: 1,
                                     whiteSpace: 'nowrap'
                                 }}>
                                     <Typography mb={1} variant="h6" component={'h2'}>
-                                            Barangay 1
+                                            {a?.label}
                                         </Typography>
-                                    <Typography fontWeight={800} variant="h4" component={'span'}>1,100</Typography>
+                                    <Typography fontWeight={800} variant="h4" component={'span'}>{a?.count}</Typography>
                                 </Paper>
+                                ))}
                             </Stack>
                             <Button sx={{ml: 'auto', mt: 2}} variant="text">See More</Button>
                         </Box>
